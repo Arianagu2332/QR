@@ -357,6 +357,10 @@ export function observeBarMutations() {
         debounceTimer = setTimeout(() => {
             applyWhitelistDOMChanges();
 
+            if (window.quickReplyMenu && typeof window.quickReplyMenu.syncRocketButtonLayout === 'function') {
+                window.quickReplyMenu.syncRocketButtonLayout();
+            }
+
             // 修复：当按钮栏发生变动（如JSR脚本启用/禁用）时，实时刷新设置面板中的白名单列表
             if (window.quickReplyMenu && typeof window.quickReplyMenu.populateWhitelistManagementUI === 'function') {
                 // 仅在列表容器存在于DOM中时执行（即设置面板已加载）

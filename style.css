@@ -98,7 +98,10 @@ body.qra-enabled #qr--bar .qrq-mixed-content > :not(.qrq-whitelisted-original) {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 4px;
+    /* SillyTavern puts #send_but at order: 2. Keep QR Assistant immediately before it. */
+    order: 1 !important;
+    flex: 0 0 32px !important;
+    margin: 0 4px 0 0 !important;
     cursor: pointer;
     transition: all 0.2s;
     width: 32px;

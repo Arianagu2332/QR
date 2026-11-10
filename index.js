@@ -2,7 +2,7 @@
 import * as Constants from './constants.js';
 import { sharedState } from './state.js';
 import { createMenuElement } from './ui.js';
-import { createSettingsHtml, createModalOverlayHtml, loadAndApplySettings, setupEventListeners, refreshUpdateUI, populateWhitelistManagementUI, updateTabGliderState, updateIconDisplay, updateBuiltinPreview, updateCharacterPreview, openSortModal, showAnnouncementModalIfNeeded, syncCombinedCheckbox } from './settings.js';
+import { createSettingsHtml, createModalOverlayHtml, loadAndApplySettings, setupEventListeners, refreshUpdateUI, populateWhitelistManagementUI, updateTabGliderState, updateIconDisplay, syncRocketButtonLayout, updateBuiltinPreview, updateCharacterPreview, openSortModal, showAnnouncementModalIfNeeded, syncCombinedCheckbox } from './settings.js';
 import { applyWhitelistDOMChanges, observeBarMutations } from './whitelist.js';
 import { setupEventListeners as setupMenuEvents, handleQuickReplyClick } from './events.js';
 import { Logger, LogCategory } from './logger.js';
@@ -166,7 +166,8 @@ function initializePlugin() {
             observeBarMutations,
             populateWhitelistManagementUI, // 暴露给 whitelist.js 调用
             openSortModal, // 暴露给 ui.js 调用
-            syncCombinedCheckbox // 暴露给全局调用
+            syncCombinedCheckbox, // 暴露给全局调用
+            syncRocketButtonLayout // 暴露给布局诊断与宿主重排同步
         };
 
         // 注入菜单到 body

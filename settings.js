@@ -54,6 +54,45 @@ export function updateTabGliderState() {
     }
 }
 
+// 根据宿主发送栏的实际方向同步 QR 按钮布局。
+// 仅固定 QR 按钮相对发送按钮的位置，不改写宿主的其他按钮顺序。
+export function syncRocketButtonLayout() {
+    const button = sharedState.domElements.rocketButton || document.getElementById(Constants.ID_ROCKET_BUTTON);
+    const sendBtn = document.getElementById('send_but');
+    const parent = button?.parentElement;
+    if (!button || !sendBtn || !parent) return null;
+
+    const parentStyle = window.getComputedStyle(parent);
+    const sendStyle = window.getComputedStyle(sendBtn);
+    const flexDirection = parentStyle.flexDirection;
+    const isRowLayout = flexDirection === 'row' || flexDirection === 'row-reverse';
+
+    // row-reverse 或 rtl 会让较大的 order 出现在视觉左侧。
+    // 两者同时存在时方向会抵消，因此使用异或判断最终视觉方向。
+    const visualAxisReversed = isRowLayout && ((flexDirection === 'row-reverse') !== (parentStyle.direction === 'rtl'));
+    const sendOrder = Number.parseFloat(sendStyle.order);
+    const normalizedSendOrder = Number.isFinite(sendOrder) ? sendOrder : 0;
+    const rocketOrder = visualAxisReversed ? normalizedSendOrder + 1 : normalizedSendOrder - 1;
+
+    button.style.setProperty('order', String(rocketOrder), 'important');
+    button.style.setProperty('flex', '0 0 32px', 'important');
+    button.style.setProperty('margin', '0 4px 0 0', 'important');
+
+    const snapshot = {
+        parentId: parent.id || parent.className || parent.tagName,
+        parentDisplay: parentStyle.display,
+        flexDirection,
+        direction: parentStyle.direction,
+        justifyContent: parentStyle.justifyContent,
+        alignItems: parentStyle.alignItems,
+        visualAxisReversed,
+        sendOrder: normalizedSendOrder,
+        rocketOrder,
+    };
+    Logger.debug(LogCategory.UI, '已根据宿主发送栏方向同步 QR 按钮布局', snapshot);
+    return snapshot;
+}
+
 // settings.js -> updateIconDisplay
 export function updateIconDisplay() {
     const button = sharedState.domElements.rocketButton;
@@ -164,6 +203,8 @@ export function updateIconDisplay() {
             }
         }
     }
+
+    syncRocketButtonLayout();
 }
 
 // 设置面板 HTML
